@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'question.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -19,9 +20,18 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends State<QuizPage> {
   List<Icon> scoreKeeper = [];
 
-  static Color mainThemeColor = Color(0xff202040);
+  List<Question> questionList = [
+    Question(question: '1+1 = 2', answer: true),
+    Question(question: '11*20 = 12', answer: false),
+    Question(question: '11/5 = 2', answer: false),
+    Question(question: '12*2 = 144', answer: true),
+  ];
+
+  int questionNumber = 0;
+
+  static Color mainThemeColor = Color(0xffFFBD69);
   static Color subThemeColor = Color(0xff543864);
-  static Color mainContentColor = Color(0xffFFBD69);
+  static Color mainContentColor = Color(0xff202040);
   static Color subContentColor = Color(0xffFF6363);
 
   Color pageBackgroundColor = mainThemeColor;
@@ -30,14 +40,14 @@ class _QuizPageState extends State<QuizPage> {
   Color trueButtonOverlayColor = Color(0xff9172a3);
   Color falseButtonColor = subContentColor;
   Color falseButtonOverlayColor = Color(0xfff79999);
-  Color correctIconColor = mainContentColor;
+  Color correctIconColor = subThemeColor;
   Color falseIconColor = subContentColor;
 
   Container questionText() {
     return Container(
       alignment: Alignment.center,
       child: Text(
-        'First question lorem ipsum ',
+        questionList[questionNumber].questionText ?? '',
         textAlign: TextAlign.center,
         style: TextStyle(
           color: questionColor,
@@ -49,7 +59,10 @@ class _QuizPageState extends State<QuizPage> {
   }
 
   Padding answerButton(
-      {String? buttonText, Color? backgroundColor, Color? overlayColor}) {
+      {String? buttonText,
+      bool? userAnswer,
+      Color? backgroundColor,
+      Color? overlayColor}) {
     return Padding(
       padding: const EdgeInsets.symmetric(
         horizontal: 30.0,
@@ -57,8 +70,14 @@ class _QuizPageState extends State<QuizPage> {
       ),
       child: ElevatedButton(
         onPressed: () {
-          scoreKeeper.add(correctIcon());
-          setState(() {});
+          if (questionList[questionNumber].questionAnswer == userAnswer) {
+            scoreKeeper.add(correctIcon());
+          } else {
+            scoreKeeper.add(falseIcon());
+          }
+          setState(() {
+            questionNumber++;
+          });
         },
         style: ButtonStyle(
           shape: MaterialStateProperty.all(
@@ -86,6 +105,7 @@ class _QuizPageState extends State<QuizPage> {
   Padding trueButton() {
     return answerButton(
         buttonText: 'TRUE',
+        userAnswer: true,
         backgroundColor: trueButtonColor,
         overlayColor: trueButtonOverlayColor);
   }
@@ -93,6 +113,7 @@ class _QuizPageState extends State<QuizPage> {
   Padding falseButton() {
     return answerButton(
         buttonText: 'FALSE',
+        userAnswer: false,
         backgroundColor: falseButtonColor,
         overlayColor: falseButtonOverlayColor);
   }
