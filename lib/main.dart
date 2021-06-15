@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'question.dart';
+import 'question_bank.dart';
 
 void main() {
   runApp(MaterialApp(
@@ -20,14 +20,7 @@ class QuizPage extends StatefulWidget {
 class _QuizPageState extends State<QuizPage> {
   List<Icon> scoreKeeper = [];
 
-  List<Question> questionList = [
-    Question(question: '1+1 = 2', answer: true),
-    Question(question: '11*20 = 12', answer: false),
-    Question(question: '11/5 = 2', answer: false),
-    Question(question: '12*2 = 144', answer: true),
-  ];
-
-  int questionNumber = 0;
+  QuestionBank questionBank = QuestionBank();
 
   static Color mainThemeColor = Color(0xffFFBD69);
   static Color subThemeColor = Color(0xff543864);
@@ -47,7 +40,7 @@ class _QuizPageState extends State<QuizPage> {
     return Container(
       alignment: Alignment.center,
       child: Text(
-        questionList[questionNumber].questionText ?? '',
+        questionBank.getQuestion() ?? '',
         textAlign: TextAlign.center,
         style: TextStyle(
           color: questionColor,
@@ -70,13 +63,13 @@ class _QuizPageState extends State<QuizPage> {
       ),
       child: ElevatedButton(
         onPressed: () {
-          if (questionList[questionNumber].questionAnswer == userAnswer) {
-            scoreKeeper.add(correctIcon());
-          } else {
-            scoreKeeper.add(falseIcon());
-          }
           setState(() {
-            questionNumber++;
+            if (questionBank.getAnswer() == userAnswer) {
+              scoreKeeper.add(correctIcon());
+            } else {
+              scoreKeeper.add(falseIcon());
+            }
+            questionBank.checkNextQuestion();
           });
         },
         style: ButtonStyle(
